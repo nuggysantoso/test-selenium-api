@@ -1,0 +1,10 @@
+
+`
+java:S1128"CRemove this unused import 'org.openqa.selenium.JavascriptExecutor'.(Ë‚«»8ñßæÄâ.
+{
+java:S1488)"^Immediately return this expression instead of assigning it to the temporary variable "select".(ë•–‚8Ìøö½â.
+š
+java:S1845O"ƒRename method "WaitForClickabilityOf" to prevent any misunderstanding/clash with method "waitForClickabilityOf" defined on line 74.(ÐÑƒâ
+c	java:S100O"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÐÑƒâ
+c
+java:S2142w"FEither re-interrupt this method or rethrow the "InterruptedException".(ä ¹€8¿²Î¾â.

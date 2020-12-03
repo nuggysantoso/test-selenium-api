@@ -1,0 +1,8 @@
+
+K
+java:S2209"5Change this instance-reference to a static reference.(¨µΑπ
+7	java:S131""Add a default case to this switch.(νΊ¶
+a
+java:S1301"KReplace this "switch" statement by "if" statements to increase readability.(νΊ¶
+L
+java:S2696"6Make the enclosing method "static" or remove this set.(¨µΑπ
