@@ -20,4 +20,5 @@ dependencies {
     compile group: 'io.rest-assured', name: 'json-path', version: '4.1.0'
     compile group: 'io.rest-assured', name: 'xml-path', version: '4.1.0'
     compile group: 'org.projectlombok', name:'lombok', version:'1.18.10'
+    compile group: 'io.github.bonigarcia', name:'webdrivermanager', version:'3.7.1'
 }

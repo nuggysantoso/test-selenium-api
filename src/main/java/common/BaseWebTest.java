@@ -2,7 +2,6 @@ package common;
 
 import org.junit.After;
 import org.junit.Before;
-import platform.web.pages.EbayPage;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

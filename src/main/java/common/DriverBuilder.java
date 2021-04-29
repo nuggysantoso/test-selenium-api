@@ -1,12 +1,14 @@
 package common;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.concurrent.TimeUnit;
 
 public class DriverBuilder {
-    private static WebDriver webDriver = null;
+    protected ThreadLocal<WebDriver> webDriver = new ThreadLocal<>();
     private static String platform;
 
     public void setPlatform(String platform){
@@ -17,25 +19,21 @@ public class DriverBuilder {
         return platform;
     }
 
-    public static void setDriver() {
+    public void setDriver() {
         if (getPlatform().equalsIgnoreCase("Web")){
             setWebDriver();
         }
     }
 
-    public static WebDriver getWebDriver(){
-        return webDriver;
+    public WebDriver getWebDriver(){
+        return webDriver.get();
     }
 
-    public static void setWebDriver(){
-        switch (System.getProperty("os.name").toLowerCase()) {
-            case "mac" : System.setProperty(Constants.DEFAULT_CHROME_PROPERTY, Constants.DEFAULT_PATH_CHROME_DRIVER_MAC);
-            break;
-            case "windows" : System.setProperty(Constants.DEFAULT_CHROME_PROPERTY, Constants.DEFAULT_PATH_CHROME_DRIVER_WINDOWS);
-            break;
-        }
-        webDriver = new ChromeDriver();
-        webDriver.manage().window().maximize();
-        webDriver.manage().timeouts().implicitlyWait(Constants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+    public void setWebDriver(){
+        ChromeOptions options = new ChromeOptions();
+        WebDriverManager.chromedriver().setup();
+        webDriver.set(new ChromeDriver(options));
+        webDriver.get().manage().window().maximize();
+        webDriver.get().manage().timeouts().implicitlyWait(Constants.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
     }
 }

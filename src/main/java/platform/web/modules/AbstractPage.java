@@ -1,19 +1,29 @@
 package platform.web.modules;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
+@Slf4j
 public abstract class AbstractPage {
+
+    /**
+     * The wait.
+     */
+    protected Wait<WebDriver> wait;
+
     protected WebDriver webDriver;
     public AbstractPage(WebDriver webDriver) {
         this.webDriver = webDriver;
+        wait = new WebDriverWait(webDriver, 20);
         PageFactory.initElements(webDriver, this);
     }
     protected abstract void checkElementInWebIsDisplayed();
@@ -26,47 +36,57 @@ public abstract class AbstractPage {
         Assert.assertEquals(message, expected, actual);
     }
 
-    protected void assertTextElementIsEquals(WebElement webElement, String expected){
-        String actual = getTextOrValueElement(webElement);
+    protected void assertTextElementIsEquals(String locator, String expected){
+        String actual = getTextOrValueElement(locator);
         assertEquals("Failed : "+ actual + " Not Equals With "+ expected, expected, actual);
     }
 
-    protected void assertElementIsDisplayed(WebElement webElement){
-        waitForVisibilityOf(webElement);
-        assertTrue("Failed : "+ webElement.toString() + " Is Not Displayed", isElementPresent(webElement));
+    protected void assertElementIsDisplayed(String locator){
+        log.info("Check Element With Locator : " + locator);
+        assertTrue("Failed : "+ locator + " Is Not Displayed", isElementPresent(locator));
+        log.info("Check Element With Locator : " + locator + " Is Displayed");
     }
 
-    protected Select selectDropdown(WebElement webElement){
-        assertElementIsDisplayed(webElement);
-        Select select = new Select(webElement);
-        return select;
+//    protected Select selectDropdown(WebElement webElement){
+//        assertElementIsDisplayed(webElement);
+//        Select select = new Select(webElement);
+//        return select;
+//    }
+
+    protected void clickElement(String locator){
+        log.info("Click Element With Locator : " + locator);
+        assertElementIsDisplayed(locator);
+        waitForVisibilityOfElementByXpath(locator).click();
+        log.info("Click Element With Locator : " + locator + " Successfully");
     }
 
-    protected void clickElement(WebElement webElement){
-        assertElementIsDisplayed(webElement);
-        webElement.click();
+    protected void inputTextToElement(String locator, String textToInput){
+        log.info("Input Text To Element : " + locator + " With Text : " + textToInput);
+        assertElementIsDisplayed(locator);
+        waitForVisibilityOfElementByXpath(locator).sendKeys(textToInput);
+        log.info("Input Text To Element : " + locator + " With Text : " + textToInput + " Successfully");
     }
 
-    protected void inputTextToElement(WebElement webElement, String textToInput){
-        assertElementIsDisplayed(webElement);
-        webElement.sendKeys(textToInput);
+    protected String getTextOrValueElement(String locator){
+        assertElementIsDisplayed(locator);
+        return waitForVisibilityOfElementByXpath(locator).getText();
     }
 
-    protected String getTextOrValueElement(WebElement webElement){
-        assertElementIsDisplayed(webElement);
-        return webElement.getText();
+    protected Boolean isElementPresent(String locator){
+       return waitForVisibilityOfElementByXpath(locator).isDisplayed();
     }
 
-    protected Boolean isElementPresent(WebElement webElement){
-       return webElement.isDisplayed();
+    protected WebElement waitForVisibilityOfElementByXpath(String locator) {
+        By xpath = By.xpath(locator);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(xpath));
     }
 
-    protected void waitForVisibilityOf(WebElement webElement) {
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        wait.until(ExpectedConditions.visibilityOf(webElement));
+    protected WebElement waitForVisibilityOfElementByTagName(String locator) {
+        By xpath = By.tagName(locator);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(xpath));
     }
 
-    protected void waitForVisibilityOf(WebElement webElement, int timeOut) {
+    protected void waitForVisibilityOfElementByXpath(WebElement webElement, int timeOut) {
         WebDriverWait wait = new WebDriverWait(webDriver, timeOut);
         wait.until(ExpectedConditions.visibilityOf(webElement));
     }
@@ -105,6 +125,10 @@ public abstract class AbstractPage {
         return webDriver.findElement(By.tagName(tagName));
     }
 
+    protected List<WebElement> getElementsByTagName(String tagName){
+        return webDriver.findElements(By.tagName(tagName));
+    }
+
     protected WebElement getElementByLinkText(String linkText){
         return webDriver.findElement(By.linkText(linkText));
     }
@@ -123,5 +147,14 @@ public abstract class AbstractPage {
 
     public void clickAcceptAlert(){
         webDriver.switchTo().alert().accept();
+    }
+
+    public void switchToFrameOrToParent(boolean defaultContent, int... index){
+        if (index.length > 0) {
+            webDriver.switchTo().frame(index[0]);
+        }
+        if (defaultContent) {
+            webDriver.switchTo().defaultContent();
+        }
     }
 }
